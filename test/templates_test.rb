@@ -223,6 +223,15 @@ class TemplatesTest < Test::Unit::TestCase
     end
     assert_equal "Hello <%= 'World' %>!", body
   end
+  
+  it "is possible to render the layout with the requested engine and the content with an overridden preference" do
+    render_app do
+      settings.template(:layout) { "#content= yield" }
+      Tilt.prefer(Tilt::RDiscountTemplate)
+      markdown :hello , :layout_engine => :haml
+    end
+    assert_equal '<div id="content"><h1>Hello From Markdown</h1></div>' , body
+  end
 
   it "does not leak the content type to the template" do
     render_app :str => { :layout_engine => :erb } do
